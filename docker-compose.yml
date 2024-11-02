@@ -6,7 +6,7 @@ services:
     container_name: mysqldb
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: foyer_db
+      MYSQL_DATABASE: tpfoyer
     ports:
       - "3306:3306"
     volumes:
