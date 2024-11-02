@@ -1,29 +1,24 @@
 package tn.esprit.tpfoyer.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import tn.esprit.tpfoyer.entity.Reservation;
 
-import java.util.Date;
+import java.time.LocalDate; // Import LocalDate
 import java.util.List;
 
 @Repository
-public interface ReservationRepository extends JpaRepository<Reservation, String>
-{
+public interface ReservationRepository extends JpaRepository<Reservation, String> {
 
-    /* No need to code CRUD here. Its is already in the
-    interfaces provided by the framework Spring Data JPA :
-       - CrudRepository or
-       - PagingAndSortingRepository or
-       - JpaRepository
-     */
+    List<Reservation> findAllByAnneeUniversitaireBeforeAndEstValide(LocalDate d, boolean b);
 
-    /* Keywords : */
+    List<Reservation> findAllByEstValide(boolean estValide);
 
-    List<Reservation> findAllByAnneeUniversitaireBeforeAndEstValide(Date d, boolean b );
+    // New method for sorting by "anneeUniversitaire" in ascending order
+    @Query("SELECT r FROM Reservation r ORDER BY r.anneeUniversitaire ASC")
+    List<Reservation> findReservationsSortedByAnneeUniversitaire();
 
+    // New method for retrieving reservations in a date range
+    List<Reservation> findAllByAnneeUniversitaireBetween(LocalDate startDate, LocalDate endDate);
 }
-
-
-

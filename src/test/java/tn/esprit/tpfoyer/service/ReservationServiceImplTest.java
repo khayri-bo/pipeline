@@ -2,36 +2,88 @@ package tn.esprit.tpfoyer.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.tpfoyer.entity.Reservation;
 import tn.esprit.tpfoyer.repository.ReservationRepository;
 
-import java.util.List;
+import java.time.LocalDate; // Import LocalDate
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ReservationServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class ReservationServiceImplTest {
 
-    private ReservationServiceImpl reservationService;
+    @Mock
     private ReservationRepository reservationRepository;
 
+    @InjectMocks
+    private ReservationServiceImpl reservationService;
+
+    private Reservation reservation1;
+    private Reservation reservation2;
+    private LocalDate dateBefore; // Change Date to LocalDate
+    private LocalDate dateAfter; // Change Date to LocalDate
+
     @BeforeEach
-    public void setUp() {
-        reservationRepository = mock(ReservationRepository.class);
-        reservationService = new ReservationServiceImpl(reservationRepository);
+    void setUp() {
+        // Setting up test data
+        dateBefore = LocalDate.of(2022, 1, 1); // Use LocalDate
+        dateAfter = LocalDate.of(2023, 1, 1); // Use LocalDate
+
+        reservation1 = new Reservation("1", dateBefore, true, new HashSet<>());
+        reservation2 = new Reservation("2", dateAfter, false, new HashSet<>());
     }
 
     @Test
-    public void testRetrieveAllReservations() {
+    void retrieveReservationsByStatus() {
         // Arrange
-        List<Reservation> expectedReservations = List.of(new Reservation(), new Reservation()); // Mocked reservation list
-        when(reservationRepository.findAll()).thenReturn(expectedReservations);
+        boolean status = true;
+        when(reservationRepository.findAllByEstValide(status)).thenReturn(Arrays.asList(reservation1));
 
         // Act
-        List<Reservation> actualReservations = reservationService.retrieveAllReservations();
+        List<Reservation> result = reservationService.retrieveReservationsByStatus(status);
 
         // Assert
-        assertEquals(expectedReservations, actualReservations);
-        verify(reservationRepository, times(1)).findAll();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(reservation1, result.get(0));
+    }
+
+    @Test
+    void triReservationsByDate() {
+        // Arrange
+        List<Reservation> reservations = Arrays.asList(reservation1, reservation2); // Include both reservations
+        when(reservationRepository.findAll()).thenReturn(reservations); // Mock the behavior
+
+        // Act
+        List<Reservation> sortedReservations = reservationService.triReservationsByDate();
+
+        // Assert
+        assertNotNull(sortedReservations);
+        assertEquals(2, sortedReservations.size()); // Expected 2
+        assertEquals(reservation1, sortedReservations.get(0)); // Oldest first
+        assertEquals(reservation2, sortedReservations.get(1));
+    }
+
+    @Test
+    void retrieveReservationsInDateRange() {
+        // Arrange
+        LocalDate startDate = LocalDate.of(2021, 1, 1); // Use LocalDate
+        LocalDate endDate = LocalDate.of(2022, 12, 31); // Use LocalDate
+        when(reservationRepository.findAllByAnneeUniversitaireBetween(startDate, endDate))
+                .thenReturn(Arrays.asList(reservation1));
+
+        // Act
+        List<Reservation> result = reservationService.retrieveReservationsInDateRange(startDate, endDate);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(reservation1, result.get(0));
     }
 }
