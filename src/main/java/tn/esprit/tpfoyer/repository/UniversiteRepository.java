@@ -12,5 +12,10 @@ public interface UniversiteRepository extends JpaRepository<Universite, Long> {
     List<Universite> findByNomUniversiteContainingIgnoreCase(String nomUniversite);
     List<Universite> findByLocation(String location);
     List<Universite> findByNomUniversite(String nomUniversite);
-    long calculateTotalUniversites();
+
+    // Méthode modifiée
+    long count(); // ou
+    // @Query("SELECT COUNT(u) FROM Universite u")
+    // long calculateTotalUniversites();
 }
+
