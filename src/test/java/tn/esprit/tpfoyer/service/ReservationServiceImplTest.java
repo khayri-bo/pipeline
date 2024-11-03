@@ -57,8 +57,7 @@ class ReservationServiceImplTest {
     @Test
     void triReservationsByDate() {
         // Arrange
-        List<Reservation> reservations = Arrays.asList(reservation1, reservation2); // Include both reservations
-        when(reservationRepository.findAll()).thenReturn(reservations); // Mock the behavior
+        when(reservationRepository.findAll()).thenReturn(Arrays.asList(reservation1, reservation2)); // Inline the list
 
         // Act
         List<Reservation> sortedReservations = reservationService.triReservationsByDate();
@@ -69,6 +68,7 @@ class ReservationServiceImplTest {
         assertEquals(reservation1, sortedReservations.get(0)); // Oldest first
         assertEquals(reservation2, sortedReservations.get(1));
     }
+
 
     @Test
     void retrieveReservationsInDateRange() {
