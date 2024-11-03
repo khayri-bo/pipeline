@@ -14,8 +14,6 @@ public interface UniversiteRepository extends JpaRepository<Universite, Long> {
     List<Universite> findByNomUniversite(String nomUniversite);
 
     // Méthode modifiée
-    long count(); // ou
-    // @Query("SELECT COUNT(u) FROM Universite u")
-    // long calculateTotalUniversites();
+    long count();
 }
 
