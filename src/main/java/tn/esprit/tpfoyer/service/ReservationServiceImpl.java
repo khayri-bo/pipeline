@@ -6,6 +6,7 @@ import tn.esprit.tpfoyer.entity.Reservation;
 import tn.esprit.tpfoyer.repository.ReservationRepository;
 
 import java.time.LocalDate; // Import LocalDate
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -57,9 +58,10 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     public List<Reservation> triReservationsByDate() {
-        List<Reservation> reservations = reservationRepository.findAll();
-        // Sort reservations by date logic goes here
-        return reservations;
+        return reservationRepository.findAll().stream()
+                .sorted(Comparator.comparing(Reservation::getAnneeUniversitaire)) // Adjust according to the date field in Reservation
+                .toList();
     }
+
 
 }
