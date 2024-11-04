@@ -61,6 +61,8 @@ public class ReservationServiceImpl implements IReservationService {
         return reservationRepository.findAll().stream()
                 .sorted(Comparator.comparing(Reservation::getAnneeUniversitaire)) // Adjust according to the date field in Reservation
                 .toList();
+
+
     }
 
 
