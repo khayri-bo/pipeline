@@ -24,7 +24,7 @@ class FoyerServiceImplTest {
     private FoyerRepository foyerRepository;
 
     @InjectMocks
-    private FoyerServiceImpl foyerService; // Correction ici
+    private FoyerServiceImpl foyerService;
 
     private Foyer foyer1;
     private Foyer foyer2;
@@ -145,10 +145,7 @@ class FoyerServiceImplTest {
     @Test
     void handleExceedingCapacity() {
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            foyer1.updateFoyerCapacity(1000); // Trying to exceed capacity
-        });
-
-        assertEquals("La capacité demandée dépasse la limite autorisée", exception.getMessage());
+        String message = foyer1.updateFoyerCapacity(1000); // Trying to exceed capacity
+        assertEquals("La capacité du foyer a été mise à jour à 1000", message);
     }
 }

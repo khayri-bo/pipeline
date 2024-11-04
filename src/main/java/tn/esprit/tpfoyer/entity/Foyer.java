@@ -32,29 +32,38 @@ public class Foyer {
     Universite universite;
 
     @OneToMany(mappedBy = "foyer")
-            @JsonIgnore
-            @ToString.Exclude
+    @JsonIgnore
+    @ToString.Exclude
     Set<Bloc> blocs;
 
     // Historique des changements de capacité
     @Transient
     @Getter // Utilisation de Lombok pour le getter
-    List<String> capacityChangeHistory = new ArrayList<>();
+            List<String> capacityChangeHistory = new ArrayList<>();
 
     // Service pour vérifier si la capacité du foyer permet un ajout
     public boolean checkFoyerCapacity(long newOccupants) {
         return this.capaciteFoyer >= newOccupants;
     }
+
     // Service pour mettre à jour la capacité du foyer
     public String updateFoyerCapacity(long additionalCapacity) {
-        long oldCapacity = this.capaciteFoyer;
-        this.capaciteFoyer += additionalCapacity;
+        long newCapacity = this.capaciteFoyer + additionalCapacity;
+
+        // Vérification pour éviter que la capacité devienne négative
+        if (newCapacity < 0) {
+            throw new IllegalArgumentException("La capacité demandée dépasse la limite autorisée");
+        }
 
         // Enregistrer le changement dans l'historique
-        logCapacityChange(oldCapacity, this.capaciteFoyer);
+        logCapacityChange(this.capaciteFoyer, newCapacity);
+
+        // Mise à jour de la capacité
+        this.capaciteFoyer = newCapacity;
 
         return "La capacité du foyer a été mise à jour à " + this.capaciteFoyer;
     }
+
     // Enregistrer une modification de capacité
     private void logCapacityChange(long oldCapacity, long newCapacity) {
         String log = "Modification de la capacité le " + new Date() +
@@ -62,8 +71,4 @@ public class Foyer {
                 ", Nouvelle capacité = " + newCapacity;
         capacityChangeHistory.add(log);
     }
-
-
 }
-
-
