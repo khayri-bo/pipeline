@@ -49,20 +49,18 @@ public class Foyer {
     // Service pour mettre à jour la capacité du foyer
     public String updateFoyerCapacity(long additionalCapacity) {
         long newCapacity = this.capaciteFoyer + additionalCapacity;
-
-        // Vérification pour éviter que la capacité devienne négative
-        if (newCapacity < 0) {
+        // Supposons que 1000 soit la capacité maximale autorisée
+        if (newCapacity > 1000) {
             throw new IllegalArgumentException("La capacité demandée dépasse la limite autorisée");
         }
+        this.capaciteFoyer = newCapacity;
 
         // Enregistrer le changement dans l'historique
-        logCapacityChange(this.capaciteFoyer, newCapacity);
-
-        // Mise à jour de la capacité
-        this.capaciteFoyer = newCapacity;
+        logCapacityChange(this.capaciteFoyer - additionalCapacity, this.capaciteFoyer);
 
         return "La capacité du foyer a été mise à jour à " + this.capaciteFoyer;
     }
+
 
     // Enregistrer une modification de capacité
     private void logCapacityChange(long oldCapacity, long newCapacity) {

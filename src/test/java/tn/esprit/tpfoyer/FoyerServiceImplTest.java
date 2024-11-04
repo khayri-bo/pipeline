@@ -134,8 +134,8 @@ class FoyerServiceImplTest {
     @Test
     void capacityChangeHistoryTracking() {
         // Act
-        foyer1.updateFoyerCapacity(50); // Update capacity
-        foyer1.updateFoyerCapacity(-20); // Another update
+        foyer1.updateFoyerCapacity(50); // Mise à jour de la capacité
+        foyer1.updateFoyerCapacity(-20); // Une autre mise à jour
 
         // Assert
         assertEquals(2, foyer1.getCapacityChangeHistory().size());
@@ -145,7 +145,10 @@ class FoyerServiceImplTest {
     @Test
     void handleExceedingCapacity() {
         // Act & Assert
-        String message = foyer1.updateFoyerCapacity(1000); // Trying to exceed capacity
-        assertEquals("La capacité du foyer a été mise à jour à 1000", message);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            foyer1.updateFoyerCapacity(1000); // Essai de dépasser la capacité
+        });
+
+        assertEquals("La capacité demandée dépasse la limite autorisée", exception.getMessage());
     }
 }
