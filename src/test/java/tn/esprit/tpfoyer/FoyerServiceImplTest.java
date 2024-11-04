@@ -2,6 +2,10 @@ package tn.esprit.tpfoyer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.tpfoyer.entity.Foyer;
 import tn.esprit.tpfoyer.repository.FoyerRepository;
 import tn.esprit.tpfoyer.service.FoyerServiceImpl;
@@ -13,19 +17,20 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class FoyerServiceImplTest {
 
+    @Mock
     private FoyerRepository foyerRepository;
-    private FoyerServiceImpl foyerService;
+
+    @InjectMocks
+    private FoyerServiceImpl foyerService; // Correction ici
 
     private Foyer foyer1;
     private Foyer foyer2;
 
     @BeforeEach
     void setUp() {
-        foyerRepository = mock(FoyerRepository.class);
-        foyerService = new FoyerServiceImpl(foyerRepository);
-
         foyer1 = new Foyer();
         foyer1.setIdFoyer(1L);
         foyer1.setNomFoyer("Foyer 1");
@@ -124,5 +129,26 @@ class FoyerServiceImplTest {
         assertEquals("La capacité du foyer a été mise à jour à 150", updateMessage);
         assertEquals(150, foyer1.getCapaciteFoyer());
         assertEquals(1, foyer1.getCapacityChangeHistory().size());
+    }
+
+    @Test
+    void capacityChangeHistoryTracking() {
+        // Act
+        foyer1.updateFoyerCapacity(50); // Update capacity
+        foyer1.updateFoyerCapacity(-20); // Another update
+
+        // Assert
+        assertEquals(2, foyer1.getCapacityChangeHistory().size());
+        assertEquals(130, foyer1.getCapaciteFoyer());
+    }
+
+    @Test
+    void handleExceedingCapacity() {
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            foyer1.updateFoyerCapacity(1000); // Trying to exceed capacity
+        });
+
+        assertEquals("La capacité demandée dépasse la limite autorisée", exception.getMessage());
     }
 }
