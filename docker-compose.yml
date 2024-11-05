@@ -13,7 +13,7 @@ services:
       - db_data:/var/lib/mysql
 
   app-foyer:
-    image: lina222/tp-foyer:5.0.0
+    image: lina222/tp-foyer-5.0.0
     container_name: app-foyer
     depends_on:
       - mysqldb
