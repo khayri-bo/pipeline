@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UniversiteServiceImplTest {
+class UniversiteServiceImplTest {
 
     @InjectMocks
     UniversiteServiceImpl universiteService;
@@ -25,7 +25,7 @@ public class UniversiteServiceImplTest {
 
     // Test de la méthode findByLocation(String location)
     @Test
-    public void testFindByLocation() {
+    void testFindByLocation() {
         // Préparation des données (Arrange)
         Universite u1 = new Universite();
         u1.setLocation("Paris");
@@ -48,7 +48,7 @@ public class UniversiteServiceImplTest {
 
     // Test de la méthode findByNomUniversite(String nomUniversite)
     @Test
-    public void testFindByNomUniversite() {
+    void testFindByNomUniversite() {
         // Préparation des données (Arrange)
         Universite u1 = new Universite();
         u1.setNomUniversite("Université de Paris");
@@ -69,7 +69,7 @@ public class UniversiteServiceImplTest {
 
     // Test de la méthode calculateTotalUniversites()
     @Test
-    public void testCalculateTotalUniversites() {
+    void testCalculateTotalUniversites() {
         // Préparation des données (Arrange)
         when(universiteRepository.count()).thenReturn(5L);  // Simule qu'il y a 5 universités en base
 

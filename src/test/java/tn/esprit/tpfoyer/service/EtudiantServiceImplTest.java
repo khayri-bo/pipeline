@@ -25,13 +25,11 @@ class EtudiantServiceImplTest {
     private EtudiantServiceImpl etudiantService;
 
     private Etudiant etudiant1;
-    private Etudiant etudiant2;
 
     @BeforeEach
     void setUp() {
         // Création de quelques étudiants pour les tests
         etudiant1 = new Etudiant(1L, "John", "Doe", 123456789, new Date());
-        etudiant2 = new Etudiant(2L, "Jane", "Doe", 987654321, new Date());
     }
 
     @Test
