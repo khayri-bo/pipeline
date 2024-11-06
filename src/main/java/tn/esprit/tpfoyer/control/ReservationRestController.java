@@ -1,5 +1,7 @@
 package tn.esprit.tpfoyer.control;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,12 @@ import java.util.List;
 public class ReservationRestController {
 
     IReservationService reservationService;
-
+    @Operation(summary = "Get all reservations",
+            description = "Retrieve a list of all reservations",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved the reservations"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            })
     // http://localhost:8089/tpfoyer/reservation/retrieve-all-reservations
     @GetMapping("/retrieve-all-reservations")
     public List<Reservation> getReservations() {
