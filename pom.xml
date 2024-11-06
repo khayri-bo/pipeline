@@ -10,7 +10,7 @@
     </parent>
     <groupId>tn.esprit</groupId>
     <artifactId>tp-foyer</artifactId>
-    <version>5.1.0</version>
+    <version>5.0.0</version>
     <name>tp-foyer</name>
     <description>tp-foyer</description>
     <properties>
@@ -81,7 +81,7 @@
         <repository>
             <id>deploymentRepo</id>
             <name>Nexus Repository</name>
-            <url>http://192.168.192.128/:8081/repository/maven-releases/</url>
+            <url>http://192.168.192.128:8081/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 
