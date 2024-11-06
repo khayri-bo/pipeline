@@ -10,7 +10,7 @@
     </parent>
     <groupId>tn.esprit</groupId>
     <artifactId>tp-foyer</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0</version>
     <name>tp-foyer</name>
     <description>tp-foyer</description>
     <properties>
@@ -23,7 +23,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
 
         <!-- Spring Web -->
         <dependency>
@@ -44,10 +43,15 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Spring Boot Actuator for monitoring and management -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Micrometer Registry for Prometheus -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <dependency>
@@ -72,11 +76,12 @@
         </dependency>
     </dependencies>
 
+    <!-- Définir le dépôt de déploiement -->
     <distributionManagement>
         <repository>
             <id>deploymentRepo</id>
-            <name>NexusRepository</name>
-            <url>http://192.168.192.128:8081/repository/maven-releases/</url>
+            <name>Nexus Repository</name>
+            <url>http://192.168.192.128/:8081/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 
