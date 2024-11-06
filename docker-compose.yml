@@ -14,7 +14,7 @@ services:
 
   app-foyer:
     image: khaireddineb/tp-foyer-5.1.0
-    container_name: app-foyer
+    container_name: app-foyer1
     depends_on:
       - mysqldb
     ports:
