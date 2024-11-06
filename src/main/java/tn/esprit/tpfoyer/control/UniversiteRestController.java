@@ -12,45 +12,45 @@ import java.util.List;
 @RequestMapping("/universite")
 public class UniversiteRestController {
 
-    IUniversiteService universiteService;
+    private final IUniversiteService universiteService;
 
-    // Récupérer toutes les universités
     @GetMapping("/retrieve-all-universites")
     public List<Universite> getUniversites() {
         return universiteService.retrieveAllUniversites();
     }
 
-    // Récupérer une université par son ID
     @GetMapping("/retrieve-universite/{universite-id}")
-
     public Universite retrieveUniversite(@PathVariable("universite-id") Long uId) {
         return universiteService.retrieveUniversite(uId);
     }
 
-    // Ajouter une nouvelle université
     @PostMapping("/add-universite")
-
     public Universite addUniversite(@RequestBody Universite u) {
         return universiteService.addUniversite(u);
     }
 
-    // Supprimer une université par son ID
     @DeleteMapping("/remove-universite/{universite-id}")
-
     public void removeUniversite(@PathVariable("universite-id") Long uId) {
         universiteService.removeUniversite(uId);
     }
 
-    // Modifier une université existante
     @PutMapping("/modify-universite")
     public Universite modifyUniversite(@RequestBody Universite u) {
         return universiteService.modifyUniversite(u);
     }
 
-    // Compter le nombre total d'universités
-    @GetMapping("/total-universites")
+    @GetMapping("/find-universite-by-name/{nom}")
+    public List<Universite> findByNomUniversite(@PathVariable String nom) {
+        return universiteService.findByNomUniversite(nom);
+    }
 
-    public long totalUniversites() {
-        return universiteService.calculateTotalUniversites();
+    @PutMapping("/update-adresse/{universite-id}")
+    public Universite updateAdresse(@PathVariable("universite-id") Long uId, @RequestParam String newAdresse) {
+        return universiteService.updateAdresse(uId, newAdresse);
+    }
+
+    @GetMapping("/count-universites")
+    public long countUniversites() {
+        return universiteService.countUniversites(); // Appel à countUniversites()
     }
 }

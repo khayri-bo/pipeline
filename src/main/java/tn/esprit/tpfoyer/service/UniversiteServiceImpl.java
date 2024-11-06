@@ -13,43 +13,46 @@ public class UniversiteServiceImpl implements IUniversiteService {
 
     private final UniversiteRepository universiteRepository;
 
-    @Override
     public List<Universite> retrieveAllUniversites() {
         return universiteRepository.findAll();
     }
 
-    @Override
     public Universite retrieveUniversite(Long universiteId) {
-        return universiteRepository.findById(universiteId).orElse(null);
+        return universiteRepository.findById(universiteId).orElse(null); // Utilisation de orElse pour gérer le cas où l'université n'existe pas
     }
 
-    @Override
     public Universite addUniversite(Universite u) {
         return universiteRepository.save(u);
     }
 
-    @Override
     public Universite modifyUniversite(Universite universite) {
         return universiteRepository.save(universite);
     }
 
-    @Override
     public void removeUniversite(Long universiteId) {
         universiteRepository.deleteById(universiteId);
     }
 
+    // Méthode pour calculer le nombre total d'universités
     @Override
-    public List<Universite> findByLocation(String location) {
-        return universiteRepository.findByLocation(location);
+    public long countUniversites() {
+        return universiteRepository.count(); // Appel à count() de JpaRepository
     }
 
+    // Méthode pour trouver les universités par nom
     @Override
-    public List<Universite> findByNomUniversite(String nomUniversite) {
-        return universiteRepository.findByNomUniversiteContainingIgnoreCase(nomUniversite);
+    public List<Universite> findByNomUniversite(String nom) {
+        return universiteRepository.findByNomUniversiteContainingIgnoreCase(nom); // Recherche par nom d'université
     }
 
+    // Méthode pour mettre à jour l'adresse d'une université
     @Override
-    public long calculateTotalUniversites() {
-        return universiteRepository.count();
+    public Universite updateAdresse(Long universiteId, String newAdresse) {
+        Universite universite = universiteRepository.findById(universiteId).orElse(null);
+        if (universite != null) {
+            universite.setAdresse(newAdresse);
+            return universiteRepository.save(universite);
+        }
+        return null; // Si l'université n'est pas trouvée, retourne null
     }
 }
