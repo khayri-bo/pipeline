@@ -48,7 +48,7 @@ public class UniversiteServiceImplTest {
 
     // Test de la méthode findByNomUniversite(String nomUniversite)
     @Test
-    public void testFindByNomUniversiteExactMatch() {
+    public void testFindByNomUniversite() {
         // Préparation des données (Arrange)
         Universite u1 = new Universite();
         u1.setNomUniversite("Université de Paris");
@@ -57,28 +57,26 @@ public class UniversiteServiceImplTest {
         u2.setNomUniversite("Université Paris-Saclay");
 
         List<Universite> universites = Arrays.asList(u1, u2);
-        when(universiteRepository.findByNomUniversiteContainingIgnoreCase("Université de Paris")).thenReturn(Arrays.asList(u1));
+        when(universiteRepository.findByNomUniversiteContainingIgnoreCase("Paris")).thenReturn(universites);
 
         // Exécution de la méthode (Act)
-        List<Universite> result = universiteService.findByNomUniversite("Université de Paris");
+        List<Universite> result = universiteService.findByNomUniversite("Paris");
 
         // Vérification des résultats (Assert)
-        assertEquals(1, result.size());  // Vérifie qu'une seule université est retournée
-        assertEquals("Université de Paris", result.get(0).getNomUniversite());  // Vérifie le nom de l'université retournée
+        assertEquals(2, result.size());  // Vérifie qu'il y a bien 2 universités correspondant au nom "Paris"
+        assertEquals("Université de Paris", result.get(0).getNomUniversite());  // Vérifie que la première université correspond
     }
-
 
     // Test de la méthode calculateTotalUniversites()
     @Test
-    public void testCalculateTotalUniversitesWithLargeNumber() {
-        // Simuler une base de données avec un grand nombre d'universités
-        when(universiteRepository.count()).thenReturn(100L);  // Simule 100 universités
+    public void testCalculateTotalUniversites() {
+        // Préparation des données (Arrange)
+        when(universiteRepository.count()).thenReturn(5L);  // Simule qu'il y a 5 universités en base
 
-        // Exécution
+        // Exécution de la méthode (Act)
         long total = universiteService.calculateTotalUniversites();
 
-        // Vérification
-        assertEquals(100L, total);  // Vérifie que le total est bien 100
+        // Vérification des résultats (Assert)
+        assertEquals(5L, total);  // Vérifie que le total est bien 5
     }
-
 }
