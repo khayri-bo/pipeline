@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entity.Etudiant;
 import tn.esprit.tpfoyer.service.IEtudiantService;
 
+import java.util.Date;
 import java.util.List;
-
+import org.springframework.format.annotation.DateTimeFormat;
 
 @RestController
 @AllArgsConstructor
@@ -15,56 +16,48 @@ public class EtudiantRestController {
 
     IEtudiantService etudiantService;
 
-
     @GetMapping("/retrieve-all-etudiants")
     public List<Etudiant> getEtudiants() {
-        List<Etudiant> listEtudiants = etudiantService.retrieveAllEtudiants();
-        return listEtudiants;
+        return etudiantService.retrieveAllEtudiants();
     }
-
-
-
-
-
-
-
-
-
-
-
 
     @GetMapping("/retrieve-etudiant-cin/{cin}")
     public Etudiant retrieveEtudiantParCin(@PathVariable("cin") Long cin) {
-        Etudiant etudiant = etudiantService.recupererEtudiantParCin(cin);
-        return etudiant;
+        return etudiantService.recupererEtudiantParCin(cin);
     }
-
 
     @GetMapping("/retrieve-etudiant/{etudiant-id}")
     public Etudiant retrieveEtudiant(@PathVariable("etudiant-id") Long chId) {
-        Etudiant etudiant = etudiantService.retrieveEtudiant(chId);
-        return etudiant;
+        return etudiantService.retrieveEtudiant(chId);
     }
 
-    // http://localhost:8089/tpfoyer/etudiant/add-etudiant
+    // Endpoint pour ajouter un étudiant
     @PostMapping("/add-etudiant")
     public Etudiant addEtudiant(@RequestBody Etudiant c) {
-        Etudiant etudiant = etudiantService.addEtudiant(c);
-        return etudiant;
+        return etudiantService.addEtudiant(c);
     }
 
-    // http://localhost:8089/tpfoyer/etudiant/remove-etudiant/{etudiant-id}
+    // Endpoint pour supprimer un étudiant
     @DeleteMapping("/remove-etudiant/{etudiant-id}")
     public void removeEtudiant(@PathVariable("etudiant-id") Long chId) {
         etudiantService.removeEtudiant(chId);
     }
 
-    // http://localhost:8089/tpfoyer/etudiant/modify-etudiant
+    // Endpoint pour modifier un étudiant
     @PutMapping("/modify-etudiant")
     public Etudiant modifyEtudiant(@RequestBody Etudiant c) {
-        Etudiant etudiant = etudiantService.modifyEtudiant(c);
-        return etudiant;
+        return etudiantService.modifyEtudiant(c);
     }
 
+    // Service avancé : Recherche par nom, prénom et date de naissance
+    @GetMapping("/search")
+    public List<Etudiant> searchEtudiants(@RequestParam String nom, @RequestParam String prenom, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateNaissance) {
+        return etudiantService.searchEtudiants(nom, prenom, dateNaissance);
+    }
 
+    // Service avancé : Nombre de réservations par étudiant
+    @GetMapping("/count-reservations/{etudiant-id}")
+    public int countReservationsByEtudiant(@PathVariable("etudiant-id") Long etudiantId) {
+        return etudiantService.countReservationsByEtudiant(etudiantId);
+    }
 }

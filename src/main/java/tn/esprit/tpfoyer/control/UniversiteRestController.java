@@ -14,37 +14,45 @@ public class UniversiteRestController {
 
     IUniversiteService universiteService;
 
-    // http://localhost:8089/tpfoyer/universite/retrieve-all-universites
+    // Récupérer toutes les universités
     @GetMapping("/retrieve-all-universites")
+    @ResponseBody
     public List<Universite> getUniversites() {
-        List<Universite> listUniversites = universiteService.retrieveAllUniversites();
-        return listUniversites;
+        return universiteService.retrieveAllUniversites();
     }
-    // http://localhost:8089/tpfoyer/universite/retrieve-universite/8
+
+    // Récupérer une université par son ID
     @GetMapping("/retrieve-universite/{universite-id}")
+    @ResponseBody
     public Universite retrieveUniversite(@PathVariable("universite-id") Long uId) {
-        Universite universite = universiteService.retrieveUniversite(uId);
-        return universite;
+        return universiteService.retrieveUniversite(uId);
     }
 
-    // http://localhost:8089/tpfoyer/universite/add-universite
+    // Ajouter une nouvelle université
     @PostMapping("/add-universite")
+    @ResponseBody
     public Universite addUniversite(@RequestBody Universite u) {
-        Universite universite = universiteService.addUniversite(u);
-        return universite;
+        return universiteService.addUniversite(u);
     }
 
-    // http://localhost:8089/tpfoyer/universite/remove-universite/{universite-id}
+    // Supprimer une université par son ID
     @DeleteMapping("/remove-universite/{universite-id}")
+    @ResponseBody
     public void removeUniversite(@PathVariable("universite-id") Long uId) {
         universiteService.removeUniversite(uId);
     }
 
-    // http://localhost:8089/tpfoyer/universite/modify-universite
+    // Modifier une université existante
     @PutMapping("/modify-universite")
+    @ResponseBody
     public Universite modifyUniversite(@RequestBody Universite u) {
-        Universite universite = universiteService.modifyUniversite(u);
-        return universite;
+        return universiteService.modifyUniversite(u);
     }
 
+    // Compter le nombre total d'universités
+    @GetMapping("/total-universites")
+    @ResponseBody
+    public long totalUniversites() {
+        return universiteService.calculateTotalUniversites();
+    }
 }

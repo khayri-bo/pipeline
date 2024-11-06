@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -11,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Universite {
+public class Universite  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +23,13 @@ public class Universite {
 
     String adresse;
 
+    private String location;
+
     @OneToOne(cascade = CascadeType.ALL)
     Foyer foyer;
 
+    private int nombreEtudiants;
+
+    @OneToMany(mappedBy = "universite", cascade = CascadeType.ALL)
+    private List<Etudiant> etudiants;
 }
-
-
