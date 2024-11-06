@@ -25,11 +25,83 @@ class EtudiantServiceImplTest {
     private EtudiantServiceImpl etudiantService;
 
     private Etudiant etudiant1;
+    private Etudiant etudiant2;
 
     @BeforeEach
     void setUp() {
-        // Création de quelques étudiants pour les tests
         etudiant1 = new Etudiant(1L, "John", "Doe", 123456789, new Date());
+        etudiant2 = new Etudiant(2L, "Jane", "Doe", 987654321, new Date());
+    }
+
+    @Test
+    void addEtudiant() {
+        // Arrange
+        when(etudiantRepository.save(etudiant1)).thenReturn(etudiant1);
+
+        // Act
+        Etudiant createdEtudiant = etudiantService.addEtudiant(etudiant1);
+
+        // Assert
+        assertNotNull(createdEtudiant);
+        assertEquals(etudiant1, createdEtudiant);
+        verify(etudiantRepository, times(1)).save(etudiant1);
+    }
+
+    @Test
+    void retrieveEtudiant() {
+        // Arrange
+        Long etudiantId = 1L;
+        when(etudiantRepository.findById(etudiantId)).thenReturn(Optional.of(etudiant1));
+
+        // Act
+        Etudiant retrievedEtudiant = etudiantService.retrieveEtudiant(etudiantId);
+
+        // Assert
+        assertNotNull(retrievedEtudiant);
+        assertEquals(etudiant1, retrievedEtudiant);
+        verify(etudiantRepository, times(1)).findById(etudiantId);
+    }
+
+    @Test
+    void retrieveAllEtudiants() {
+        // Arrange
+        List<Etudiant> etudiants = Arrays.asList(etudiant1, etudiant2);
+        when(etudiantRepository.findAll()).thenReturn(etudiants);
+
+        // Act
+        List<Etudiant> result = etudiantService.retrieveAllEtudiants();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.contains(etudiant1));
+        assertTrue(result.contains(etudiant2));
+        verify(etudiantRepository, times(1)).findAll();
+    }
+
+    @Test
+    void modifyEtudiant() {
+        // Arrange
+        etudiant1.setNomEtudiant("Johnathan");
+        when(etudiantRepository.save(etudiant1)).thenReturn(etudiant1);
+
+        // Act
+        Etudiant modifiedEtudiant = etudiantService.modifyEtudiant(etudiant1);
+
+        // Assert
+        assertEquals("Johnathan", modifiedEtudiant.getNomEtudiant());
+        verify(etudiantRepository, times(1)).save(etudiant1);
+    }
+
+    @Test
+    void removeEtudiant() {
+        // Arrange
+        Long etudiantId = 1L;
+
+        // Act
+        etudiantService.removeEtudiant(etudiantId);
+
+        // Assert
+        verify(etudiantRepository, times(1)).deleteById(etudiantId);
     }
 
     @Test
@@ -38,8 +110,6 @@ class EtudiantServiceImplTest {
         String nom = "Doe";
         String prenom = "John";
         Date dateNaissance = etudiant1.getDateNaissance();
-
-        // Mock de la méthode de recherche
         when(etudiantRepository.findByNomEtudiantAndPrenomEtudiantAndDateNaissance(nom, prenom, dateNaissance))
                 .thenReturn(Arrays.asList(etudiant1));
 
@@ -56,13 +126,13 @@ class EtudiantServiceImplTest {
     void countReservationsByEtudiant() {
         // Arrange
         Long etudiantId = 1L;
-        etudiant1.setReservations(Set.of(new Reservation()));  // Mock de réservations
+        etudiant1.setReservations(Set.of(new Reservation()));
         when(etudiantRepository.findById(etudiantId)).thenReturn(Optional.of(etudiant1));
 
         // Act
         int count = etudiantService.countReservationsByEtudiant(etudiantId);
 
         // Assert
-        assertEquals(1, count);  // Il y a une réservation dans l'étudiant1
+        assertEquals(1, count);
     }
 }
