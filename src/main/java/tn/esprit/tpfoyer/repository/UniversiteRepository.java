@@ -1,13 +1,19 @@
 package tn.esprit.tpfoyer.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tn.esprit.tpfoyer.entity.Universite;
 
+import java.util.List;
+
 @Repository
-public interface UniversiteRepository extends JpaRepository<Universite, Long>
-{
+public interface UniversiteRepository extends JpaRepository<Universite, Long> {
 
+    List<Universite> findByNomUniversiteContainingIgnoreCase(String nomUniversite);
+    List<Universite> findByLocation(String location);
+    List<Universite> findByNomUniversite(String nomUniversite);
 
+    // Méthode modifiée
+    long count();
 }
+

@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDate; // Use LocalDate for better date handling
 import java.util.Set;
-
 
 @Entity
 @Getter
@@ -18,31 +17,23 @@ import java.util.Set;
 public class Reservation {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Change this if you use a different strategy
     String idReservation;
 
+    @Column(name = "annee_universitaire") // Optional: customize column name
+    LocalDate anneeUniversitaire; // Changed to LocalDate
 
-    Date anneeUniversitaire;
     boolean estValide;
 
-
-
-
-
-
-
-
-
-
-
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // Define cascade operations
+    @JoinTable(
+            name = "reservation_etudiant", // Join table name
+            joinColumns = @JoinColumn(name = "reservation_id"), // Column for reservation
+            inverseJoinColumns = @JoinColumn(name = "etudiant_id") // Column for etudiant
+    )
     Set<Etudiant> etudiants;
 
-
-
-
-    /*@ToString.Exclude
-    @JsonIgnore*/
+    // You can add a field for the total price if needed
+    // double totalPrice;
 
 }
-
-

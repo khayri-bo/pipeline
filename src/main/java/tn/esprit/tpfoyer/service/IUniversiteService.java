@@ -6,12 +6,16 @@ import java.util.List;
 
 public interface IUniversiteService {
 
-    public List<Universite> retrieveAllUniversites();
-    public Universite retrieveUniversite(Long universiteId);
-    public Universite addUniversite(Universite f);
-    public void removeUniversite(Long universiteId);
-    public Universite modifyUniversite(Universite universite);
+    List<Universite> retrieveAllUniversites();
+    Universite retrieveUniversite(Long universiteId);
+    Universite addUniversite(Universite u);
+    void removeUniversite(Long universiteId);
+    Universite modifyUniversite(Universite universite);
 
-    // Here we will add later methods calling keywords and methods calling JPQL
+    // Méthodes supplémentaires
+    List<Universite> findByLocation(String location);
+    List<Universite> findByNomUniversite(String nomUniversite);
+    long calculateTotalUniversites();
 
+    // Ici, nous ajouterons plus tard des méthodes utilisant des mots-clés et des méthodes JPQL
 }
