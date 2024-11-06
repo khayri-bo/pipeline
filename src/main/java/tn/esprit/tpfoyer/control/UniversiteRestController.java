@@ -16,49 +16,57 @@ public class UniversiteRestController {
 
     // Récupérer toutes les universités
     @GetMapping("/retrieve-all-universites")
+    @ResponseBody
     public List<Universite> getUniversites() {
         return universiteService.retrieveAllUniversites();
     }
 
     // Récupérer une université par son ID
     @GetMapping("/retrieve-universite/{universite-id}")
+    @ResponseBody
     public Universite retrieveUniversite(@PathVariable("universite-id") Long uId) {
         return universiteService.retrieveUniversite(uId);
     }
 
     // Ajouter une nouvelle université
     @PostMapping("/add-universite")
+    @ResponseBody
     public Universite addUniversite(@RequestBody Universite u) {
         return universiteService.addUniversite(u);
     }
 
     // Supprimer une université par son ID
     @DeleteMapping("/remove-universite/{universite-id}")
+    @ResponseBody
     public void removeUniversite(@PathVariable("universite-id") Long uId) {
         universiteService.removeUniversite(uId);
     }
 
     // Modifier une université existante
     @PutMapping("/modify-universite")
+    @ResponseBody
     public Universite modifyUniversite(@RequestBody Universite u) {
         return universiteService.modifyUniversite(u);
     }
 
     // Compter le nombre total d'universités
     @GetMapping("/total-universites")
+    @ResponseBody
     public long totalUniversites() {
         return universiteService.calculateTotalUniversites();
     }
 
-    // Récupérer les universités par emplacement
-    @GetMapping("/retrieve-universites-by-location/{location}")
+    // Récupérer les universités par localisation
+    @GetMapping("/retrieve-by-location/{location}")
+    @ResponseBody
     public List<Universite> getUniversitesByLocation(@PathVariable("location") String location) {
         return universiteService.findByLocation(location);
     }
 
     // Récupérer les universités par nom
-    @GetMapping("/retrieve-universites-by-name/{nomUniversite}")
-    public List<Universite> getUniversitesByName(@PathVariable("nomUniversite") String nomUniversite) {
-        return universiteService.findByNomUniversite(nomUniversite);
+    @GetMapping("/retrieve-by-nom/{nom}")
+    @ResponseBody
+    public List<Universite> getUniversitesByNom(@PathVariable("nom") String nom) {
+        return universiteService.findByNomUniversite(nom);
     }
 }
