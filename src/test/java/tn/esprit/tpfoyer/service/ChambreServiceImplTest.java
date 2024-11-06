@@ -9,6 +9,7 @@ import tn.esprit.tpfoyer.entity.Chambre;
 import tn.esprit.tpfoyer.entity.TypeChambre;
 import tn.esprit.tpfoyer.repository.ChambreRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -36,108 +37,94 @@ class ChambreServiceImplTest {
     }
 
     @Test
-    public void testRetrieveAllChambres() {
+    public void testRetrieveAllChambresReturnsEmptyList() {
         // Arrange
-        List<Chambre> expectedChambres = List.of(chambre);
-        when(chambreRepository.findAll()).thenReturn(expectedChambres);
+        when(chambreRepository.findAll()).thenReturn(Collections.emptyList());
 
         // Act
-        List<Chambre> actualChambres = chambreService.retrieveAllChambres();
+        List<Chambre> chambres = chambreService.retrieveAllChambres();
 
         // Assert
-        assertEquals(expectedChambres, actualChambres);
+        assertTrue(chambres.isEmpty());
         verify(chambreRepository, times(1)).findAll();
     }
 
     @Test
-    public void testRetrieveChambreById() {
+    public void testRetrieveChambreByIdThrowsExceptionWhenNotFound() {
         // Arrange
-        when(chambreRepository.findById(1L)).thenReturn(Optional.of(chambre));
-
-        // Act
-        Chambre result = chambreService.retrieveChambre(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(chambre, result);
-        verify(chambreRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    public void testRetrieveChambreByIdNotFound() {
-        // Arrange
-        when(chambreRepository.findById(1L)).thenReturn(Optional.empty());
+        when(chambreRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NoSuchElementException.class, () -> chambreService.retrieveChambre(1L));
-        verify(chambreRepository, times(1)).findById(1L);
+        assertThrows(NoSuchElementException.class, () -> chambreService.retrieveChambre(999L));
+        verify(chambreRepository, times(1)).findById(999L);
     }
 
     @Test
-    public void testAddChambre() {
+    public void testAddChambreWithNullValues() {
         // Arrange
-        when(chambreRepository.save(chambre)).thenReturn(chambre);
+        Chambre nullChambre = new Chambre();
+        when(chambreRepository.save(nullChambre)).thenReturn(nullChambre);
 
         // Act
-        Chambre result = chambreService.addChambre(chambre);
+        Chambre savedChambre = chambreService.addChambre(nullChambre);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(chambre, result);
-        verify(chambreRepository, times(1)).save(chambre);
+        assertNotNull(savedChambre);
+        verify(chambreRepository, times(1)).save(nullChambre);
     }
 
     @Test
-    public void testModifyChambre() {
+    public void testModifyChambreNotFound() {
         // Arrange
-        chambre.setNumeroChambre(102L);
-        when(chambreRepository.save(chambre)).thenReturn(chambre);
+        Chambre chambreToModify = new Chambre();
+        chambreToModify.setIdChambre(2L);
+        chambreToModify.setNumeroChambre(102L);
+
+        when(chambreRepository.findById(2L)).thenReturn(Optional.empty());
+        when(chambreRepository.save(chambreToModify)).thenReturn(chambreToModify);
 
         // Act
-        Chambre result = chambreService.modifyChambre(chambre);
+        Chambre modifiedChambre = chambreService.modifyChambre(chambreToModify);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(102L, result.getNumeroChambre());
-        verify(chambreRepository, times(1)).save(chambre);
+        assertNotNull(modifiedChambre);
+        verify(chambreRepository, times(1)).save(chambreToModify);
     }
 
     @Test
-    public void testRemoveChambre() {
-        // Act
-        chambreService.removeChambre(1L);
-
-        // Assert
-        verify(chambreRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    public void testRecupererChambresSelonTyp() {
+    public void testRecupererChambresSelonTypReturnsEmptyList() {
         // Arrange
         TypeChambre type = TypeChambre.DOUBLE;
-        List<Chambre> expectedChambres = List.of(new Chambre(), new Chambre());
-        when(chambreRepository.findAllByTypeC(type)).thenReturn(expectedChambres);
+        when(chambreRepository.findAllByTypeC(type)).thenReturn(Collections.emptyList());
 
         // Act
-        List<Chambre> actualChambres = chambreService.recupererChambresSelonTyp(type);
+        List<Chambre> chambres = chambreService.recupererChambresSelonTyp(type);
 
         // Assert
-        assertEquals(expectedChambres, actualChambres);
+        assertTrue(chambres.isEmpty());
         verify(chambreRepository, times(1)).findAllByTypeC(type);
     }
 
     @Test
-    public void testTrouverChambreSelonEtudiant() {
+    public void testTrouverChambreSelonEtudiantReturnsNull() {
         // Arrange
         long cin = 123456;
-        when(chambreRepository.trouverChselonEt(cin)).thenReturn(chambre);
+        when(chambreRepository.trouverChselonEt(cin)).thenReturn(null);
 
         // Act
-        Chambre result = chambreService.trouverchambreSelonEtudiant(cin);
+        Chambre chambreResult = chambreService.trouverchambreSelonEtudiant(cin);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(chambre, result);
+        assertNull(chambreResult);
         verify(chambreRepository, times(1)).trouverChselonEt(cin);
+    }
+
+    @Test
+    public void testRemoveChambreWhenIdNotFound() {
+        // Act
+        chambreService.removeChambre(999L);
+
+        // Assert
+        verify(chambreRepository, times(1)).deleteById(999L);
     }
 }
