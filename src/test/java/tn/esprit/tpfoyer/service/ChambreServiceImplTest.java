@@ -36,4 +36,5 @@ public class ChambreServiceImplTest {
         assertEquals(expectedChambres, actualChambres);
         verify(chambreRepository, times(1)).findAllByTypeC(type);
     }
+
 }
