@@ -8,17 +8,13 @@ public interface IUniversiteService {
 
     List<Universite> retrieveAllUniversites();
     Universite retrieveUniversite(Long universiteId);
-    Universite addUniversite(Universite f);
+    Universite addUniversite(Universite u);
     void removeUniversite(Long universiteId);
     Universite modifyUniversite(Universite universite);
 
-    // Here we will add later methods calling keywords and methods calling JPQL
-
-    List<Universite> searchUniversites(String nomUniversite, String addresse);
-
-    List<Universite> bulkUpdateUniversites(List<Universite> universites);
-
-    void deleteAllUniversities();
+    List<Universite> findByLocation(String location);
+    List<Universite> findByNomUniversite(String nomUniversite);
+    long calculateTotalUniversites();
 
 
 }
