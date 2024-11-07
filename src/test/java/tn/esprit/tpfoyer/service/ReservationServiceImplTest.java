@@ -35,8 +35,8 @@ class ReservationServiceImplTest {
         dateBefore = LocalDate.of(2022, 1, 1);
         dateAfter = LocalDate.of(2023, 1, 1);
 
-        reservation1 = new Reservation("1", dateBefore, true, new HashSet<>());
-        reservation2 = new Reservation("2", dateAfter, false, new HashSet<>());
+        reservation1 = new Reservation(1L, dateBefore, true, new HashSet<>());
+        reservation2 = new Reservation(2L, dateAfter, false, new HashSet<>());
     }
 
     @Test
@@ -56,7 +56,7 @@ class ReservationServiceImplTest {
     @Test
     void retrieveReservation() {
         // Arrange
-        String reservationId = "1";
+        Long reservationId = 1L;
         when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation1));
 
         // Act
@@ -86,7 +86,7 @@ class ReservationServiceImplTest {
     @Test
     void removeReservation() {
         // Arrange
-        String reservationId = "1";
+        Long reservationId = 1L;
 
         // Act
         reservationService.removeReservation(reservationId);
@@ -145,16 +145,16 @@ class ReservationServiceImplTest {
     void retrieveReservationsInDateRange() {
         // Arrange
         LocalDate startDate = LocalDate.of(2021, 1, 1);
-        LocalDate endDate = LocalDate.of(2022, 12, 31);
-        when(reservationRepository.findAllByAnneeUniversitaireBetween(startDate, endDate))
-                .thenReturn(Arrays.asList(reservation1));
+        LocalDate endDate = LocalDate.of(2024, 1, 1);
+        when(reservationRepository.findAllByAnneeUniversitaireBetween(startDate, endDate)).thenReturn(Arrays.asList(reservation1, reservation2));
 
         // Act
         List<Reservation> result = reservationService.retrieveReservationsInDateRange(startDate, endDate);
 
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         assertEquals(reservation1, result.get(0));
+        assertEquals(reservation2, result.get(1));
     }
 }

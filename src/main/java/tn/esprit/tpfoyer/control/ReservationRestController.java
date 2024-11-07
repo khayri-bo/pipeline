@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entity.Reservation;
 import tn.esprit.tpfoyer.service.IReservationService;
 
-import java.time.LocalDate; // Import LocalDate
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -17,6 +17,7 @@ import java.util.List;
 public class ReservationRestController {
 
     IReservationService reservationService;
+
     @Operation(summary = "Get all reservations",
             description = "Retrieve a list of all reservations",
             responses = {
@@ -31,13 +32,13 @@ public class ReservationRestController {
 
     // http://localhost:8089/tpfoyer/reservation/retrieve-reservation/8
     @GetMapping("/retrieve-reservation/{reservation-id}")
-    public Reservation retrieveReservation(@PathVariable("reservation-id") String rId) {
+    public Reservation retrieveReservation(@PathVariable("reservation-id") Long rId) { // Change to Long
         return reservationService.retrieveReservation(rId);
     }
 
     @GetMapping("/retrieve-reservation-date-status/{d}/{v}")
     public List<Reservation> retrieveReservationParDateEtStatus(
-            @PathVariable("d") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate d, // Change Date to LocalDate
+            @PathVariable("d") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate d,
             @PathVariable("v") boolean b) {
         return reservationService.trouverResSelonDateEtStatus(d, b);
     }
@@ -48,9 +49,8 @@ public class ReservationRestController {
         return reservationService.addReservation(r);
     }
 
-
     @DeleteMapping("/remove-reservation/{reservation-id}")
-    public void removeReservation(@PathVariable("reservation-id") String rId) {
+    public void removeReservation(@PathVariable("reservation-id") Long rId) { // Change to Long
         reservationService.removeReservation(rId);
     }
 
