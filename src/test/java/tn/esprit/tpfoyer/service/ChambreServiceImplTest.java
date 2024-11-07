@@ -2,71 +2,142 @@ package tn.esprit.tpfoyer.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import tn.esprit.tpfoyer.entity.Chambre;
 import tn.esprit.tpfoyer.entity.TypeChambre;
 import tn.esprit.tpfoyer.repository.ChambreRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ChambreServiceImplTest {
+class ChambreServiceImplTest {
 
+    @InjectMocks
     private ChambreServiceImpl chambreService;
+
+    @Mock
     private ChambreRepository chambreRepository;
+
+    private Chambre chambre;
 
     @BeforeEach
     public void setUp() {
-        chambreRepository = mock(ChambreRepository.class);
-        chambreService = new ChambreServiceImpl(chambreRepository);
+        MockitoAnnotations.openMocks(this);
+        chambre = new Chambre();
+        chambre.setIdChambre(1L);
+        chambre.setNumeroChambre(101L);
+        chambre.setTypeC(TypeChambre.SIMPLE);
     }
 
     @Test
-    public void testRecupererChambresSelonTyp() {
-        TypeChambre type = TypeChambre.DOUBLE;
-        List<Chambre> expectedChambres = List.of(new Chambre(), new Chambre());
-        when(chambreRepository.findAllByTypeC(type)).thenReturn(expectedChambres);
+    public void testRetrieveAllChambres() {
+        // Arrange
+        List<Chambre> expectedChambres = List.of(chambre);
+        when(chambreRepository.findAll()).thenReturn(expectedChambres);
 
-        List<Chambre> actualChambres = chambreService.recupererChambresSelonTyp(type);
+        // Act
+        List<Chambre> actualChambres = chambreService.retrieveAllChambres();
 
+        // Assert
         assertEquals(expectedChambres, actualChambres);
-        verify(chambreRepository, times(1)).findAllByTypeC(type);
+        verify(chambreRepository, times(1)).findAll();
     }
 
     @Test
-    public void testRetrieveChambre() {
-        Long id = 1L;
-        Chambre chambre = new Chambre();
-        chambre.setIdChambre(id);
-        when(chambreRepository.findById(id)).thenReturn(Optional.of(chambre));
+    public void testRetrieveChambreById() {
+        // Arrange
+        when(chambreRepository.findById(1L)).thenReturn(Optional.of(chambre));
 
-        Chambre result = chambreService.retrieveChambre(id);
+        // Act
+        Chambre result = chambreService.retrieveChambre(1L);
 
+        // Assert
         assertNotNull(result);
-        assertEquals(id, result.getIdChambre());
-        verify(chambreRepository, times(1)).findById(id);
+        assertEquals(chambre, result);
+        verify(chambreRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    public void testRetrieveChambreByIdNotFound() {
+        // Arrange
+        when(chambreRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> chambreService.retrieveChambre(1L));
+        verify(chambreRepository, times(1)).findById(1L);
     }
 
     @Test
     public void testAddChambre() {
-        Chambre chambre = new Chambre();
+        // Arrange
         when(chambreRepository.save(chambre)).thenReturn(chambre);
 
+        // Act
         Chambre result = chambreService.addChambre(chambre);
 
+        // Assert
         assertNotNull(result);
+        assertEquals(chambre, result);
+        verify(chambreRepository, times(1)).save(chambre);
+    }
+
+    @Test
+    public void testModifyChambre() {
+        // Arrange
+        chambre.setNumeroChambre(102L);
+        when(chambreRepository.save(chambre)).thenReturn(chambre);
+
+        // Act
+        Chambre result = chambreService.modifyChambre(chambre);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(102L, result.getNumeroChambre());
         verify(chambreRepository, times(1)).save(chambre);
     }
 
     @Test
     public void testRemoveChambre() {
-        Long id = 1L;
+        // Act
+        chambreService.removeChambre(1L);
 
-        chambreService.removeChambre(id);
+        // Assert
+        verify(chambreRepository, times(1)).deleteById(1L);
+    }
 
-        verify(chambreRepository, times(1)).deleteById(id);
+    @Test
+    public void testRecupererChambresSelonTyp() {
+        // Arrange
+        TypeChambre type = TypeChambre.DOUBLE;
+        List<Chambre> expectedChambres = List.of(new Chambre(), new Chambre());
+        when(chambreRepository.findAllByTypeC(type)).thenReturn(expectedChambres);
+
+        // Act
+        List<Chambre> actualChambres = chambreService.recupererChambresSelonTyp(type);
+
+        // Assert
+        assertEquals(expectedChambres, actualChambres);
+        verify(chambreRepository, times(1)).findAllByTypeC(type);
+    }
+
+    @Test
+    public void testTrouverChambreSelonEtudiant() {
+        // Arrange
+        long cin = 123456;
+        when(chambreRepository.trouverChselonEt(cin)).thenReturn(chambre);
+
+        // Act
+        Chambre result = chambreService.trouverchambreSelonEtudiant(cin);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(chambre, result);
+        verify(chambreRepository, times(1)).trouverChselonEt(cin);
     }
 }

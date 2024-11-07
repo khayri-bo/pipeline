@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
-
 
 @Entity
 @Getter
@@ -18,31 +17,19 @@ import java.util.Set;
 public class Reservation {
 
     @Id
-    String idReservation;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long idReservation; // Change to Long
 
+    @Column(name = "annee_universitaire")
+    LocalDate anneeUniversitaire;
 
-    Date anneeUniversitaire;
     boolean estValide;
 
-
-
-
-
-
-
-
-
-
-
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "reservation_etudiant",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "etudiant_id")
+    )
     Set<Etudiant> etudiants;
-
-
-
-
-    /*@ToString.Exclude
-    @JsonIgnore*/
-
 }
-
-

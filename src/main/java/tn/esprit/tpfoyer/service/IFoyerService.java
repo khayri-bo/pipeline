@@ -12,6 +12,13 @@ public interface IFoyerService {
     public void removeFoyer(Long foyerId);
     public Foyer modifyFoyer(Foyer foyer);
 
-    // Here we will add later methods calling keywords and methods calling JPQL
+    // Vérifier si la capacité du foyer permet l'ajout d'occupants
+    boolean checkFoyerCapacity(Long foyerId, long newOccupants);
+
+    // Mettre à jour la capacité du foyer
+    String updateFoyerCapacity(Long foyerId, long additionalCapacity);
+
+    // Récupérer l'historique des changements de capacité
+    List<String> getCapacityChangeHistory(Long foyerId);
 
 }
