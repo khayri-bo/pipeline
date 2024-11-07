@@ -11,8 +11,6 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-
-
 @NoArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -27,10 +25,11 @@ public class Etudiant {
     long cinEtudiant;
     Date dateNaissance;
 
+    @ManyToOne // Indique que plusieurs étudiants peuvent appartenir à la même université
+    @JoinColumn(name = "universite_id") // Nom de la colonne dans la table Etudiant
+    Universite universite; // Ajout de la relation vers Universite
+
     @ManyToMany(mappedBy = "etudiants")
     Set<Reservation> reservations;
 
 }
-
-
-
