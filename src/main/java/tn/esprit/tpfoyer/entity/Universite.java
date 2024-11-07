@@ -21,8 +21,10 @@ public class Universite {
 
     String adresse;
 
-    String location;  // Ajoutez ce champ si ce n'est pas encore fait
-
     @OneToOne(cascade = CascadeType.ALL)
     Foyer foyer;
+
 }
+
+
+

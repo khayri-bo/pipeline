@@ -1,146 +1,100 @@
-package tn.esprit.tpfoyer.service;
-
+package tn.esprit.tpfoyer.universite.service;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import tn.esprit.tpfoyer.entity.Universite;
 import tn.esprit.tpfoyer.repository.UniversiteRepository;
+import tn.esprit.tpfoyer.service.UniversiteServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-public class UniversiteServiceImplTest {
-
-    @InjectMocks
-    private UniversiteServiceImpl universiteService;
+class UniversiteServiceImplTest {
 
     @Mock
-    private UniversiteRepository universiteRepository;
+    UniversiteRepository universiteRepository;
 
-    // Test pour la méthode findByNomUniversite()
-    @Test
-    public void testFindByNomUniversite() {
-        Universite u1 = new Universite();
-        u1.setNomUniversite("Université de Paris");
+    @InjectMocks
+    UniversiteServiceImpl universiteService;
 
-        Universite u2 = new Universite();
-        u2.setNomUniversite("Université Paris-Saclay");
-
-        List<Universite> universites = Arrays.asList(u1, u2);
-
-        when(universiteRepository.findByNomUniversiteContainingIgnoreCase("Paris")).thenReturn(universites);
-
-        List<Universite> result = universiteService.findByNomUniversite("Paris");
-
-        assertEquals(2, result.size());
-        assertEquals("Université de Paris", result.get(0).getNomUniversite());
-        assertEquals("Université Paris-Saclay", result.get(1).getNomUniversite());
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
-    // Test pour la méthode countUniversites()
     @Test
-    public void testCountUniversites() {
-        when(universiteRepository.count()).thenReturn(5L);
+    void testSearchUniversites() {
+        // Given
+        Universite u1 = new Universite(1L, "ESPRIT", "Tunis", null);
+        Universite u2 = new Universite(2L, "ENIG", "Gabès", null);
+        List<Universite> expectedUniversities = Arrays.asList(u1, u2);
 
-        long total = universiteService.countUniversites();
+        // When
+        when(universiteRepository.searchUniversites("ESPRIT", "Tunis")).thenReturn(expectedUniversities);
 
-        assertEquals(5L, total);
+        // Execute the service method
+        List<Universite> actualUniversities = universiteService.searchUniversites("ESPRIT", "Tunis");
+
+        // Then
+        assertNotNull(actualUniversities);
+        assertEquals(2, actualUniversities.size());
+        assertEquals("ESPRIT", actualUniversities.get(0).getNomUniversite());
+
+        // Verify the repository method was called
+        verify(universiteRepository, times(1)).searchUniversites("ESPRIT", "Tunis");
+    }
+    @Test
+    void testBulkUpdateUniversites() {
+        // Given
+        Universite u1 = new Universite(1L, "ESPRIT", "Tunis", null);
+        Universite u2 = new Universite(2L, "ENIG", "Gabès", null);
+        List<Universite> universitiesToUpdate = Arrays.asList(u1, u2);
+
+        // When
+        when(universiteRepository.saveAll(universitiesToUpdate)).thenReturn(universitiesToUpdate);
+
+        // Execute the service method
+        List<Universite> updatedUniversities = universiteService.bulkUpdateUniversites(universitiesToUpdate);
+
+        // Then
+        assertNotNull(updatedUniversities);
+        assertEquals(2, updatedUniversities.size());
+        assertEquals("ESPRIT", updatedUniversities.get(0).getNomUniversite());
+        assertEquals("ENIG", updatedUniversities.get(1).getNomUniversite());
+
+        // Verify the repository method was called
+        verify(universiteRepository, times(1)).saveAll(universitiesToUpdate);
     }
 
-    // Test pour la méthode retrieveAllUniversites()
     @Test
-    public void testRetrieveAllUniversites() {
-        Universite u1 = new Universite();
-        u1.setNomUniversite("Université A");
+    void testBulkUpdateUniversites_EmptyList() {
+        // Given
+        List<Universite> emptyList = List.of();
 
-        Universite u2 = new Universite();
-        u2.setNomUniversite("Université B");
+        // When
+        when(universiteRepository.saveAll(emptyList)).thenReturn(emptyList);
 
-        when(universiteRepository.findAll()).thenReturn(Arrays.asList(u1, u2));
+        // Execute the service method
+        List<Universite> updatedUniversities = universiteService.bulkUpdateUniversites(emptyList);
 
-        List<Universite> universites = universiteService.retrieveAllUniversites();
+        // Then
+        assertNotNull(updatedUniversities);
+        assertTrue(updatedUniversities.isEmpty());
 
-        assertEquals(2, universites.size());
-        assertEquals("Université A", universites.get(0).getNomUniversite());
-        assertEquals("Université B", universites.get(1).getNomUniversite());
+        // Verify the repository method was called
+        verify(universiteRepository, times(1)).saveAll(emptyList);
     }
-
-    // Test pour la méthode retrieveUniversite()
     @Test
-    public void testRetrieveUniversite() {
-        Universite u = new Universite();
-        u.setNomUniversite("Université A");
+    void testDeleteAllUniversities() {
+        // When
+        universiteService.deleteAllUniversities();
 
-        when(universiteRepository.findById(1L)).thenReturn(Optional.of(u));
-
-        Universite universite = universiteService.retrieveUniversite(1L);
-
-        assertNotNull(universite);
-        assertEquals("Université A", universite.getNomUniversite());
-    }
-
-    // Test pour la méthode addUniversite()
-    @Test
-    public void testAddUniversite() {
-        Universite u = new Universite();
-        u.setNomUniversite("Nouvelle Université");
-
-        when(universiteRepository.save(u)).thenReturn(u);
-
-        Universite savedUniversite = universiteService.addUniversite(u);
-
-        assertNotNull(savedUniversite);
-        assertEquals("Nouvelle Université", savedUniversite.getNomUniversite());
-    }
-
-    // Test pour la méthode removeUniversite()
-    @Test
-    public void testRemoveUniversite() {
-        Long uId = 1L;
-
-        // Pas besoin de retour ici, juste vérifier que la méthode est appelée
-        doNothing().when(universiteRepository).deleteById(uId);
-
-        universiteService.removeUniversite(uId);
-
-        verify(universiteRepository, times(1)).deleteById(uId);
-    }
-
-    // Test pour la méthode modifyUniversite()
-    @Test
-    public void testModifyUniversite() {
-        Universite u = new Universite();
-        u.setNomUniversite("Université Modifiée");
-
-        when(universiteRepository.save(u)).thenReturn(u);
-
-        Universite updatedUniversite = universiteService.modifyUniversite(u);
-
-        assertNotNull(updatedUniversite);
-        assertEquals("Université Modifiée", updatedUniversite.getNomUniversite());
-    }
-
-    // Test pour la méthode updateAdresse()
-    @Test
-    public void testUpdateAdresse() {
-        Universite u = new Universite();
-        u.setNomUniversite("Université Adresse");
-        u.setAdresse("Ancienne Adresse");
-
-        when(universiteRepository.findById(1L)).thenReturn(Optional.of(u));
-        when(universiteRepository.save(u)).thenReturn(u);
-
-        Universite updatedUniversite = universiteService.updateAdresse(1L, "Nouvelle Adresse");
-
-        assertNotNull(updatedUniversite);
-        assertEquals("Nouvelle Adresse", updatedUniversite.getAdresse());
+        // Then
+        verify(universiteRepository, times(1)).deleteAllUniversities();// Verify the custom method is called
     }
 }
