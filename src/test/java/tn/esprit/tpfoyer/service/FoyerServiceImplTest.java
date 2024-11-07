@@ -1,4 +1,4 @@
-package tn.esprit.tpfoyer;
+package tn.esprit.tpfoyer.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.tpfoyer.entity.Foyer;
 import tn.esprit.tpfoyer.repository.FoyerRepository;
-import tn.esprit.tpfoyer.service.FoyerServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,13 +43,9 @@ class FoyerServiceImplTest {
 
     @Test
     void retrieveAllFoyers() {
-        // Arrange
         when(foyerRepository.findAll()).thenReturn(Arrays.asList(foyer1, foyer2));
-
-        // Act
         List<Foyer> result = foyerService.retrieveAllFoyers();
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(foyer1, result.get(0));
@@ -58,97 +53,107 @@ class FoyerServiceImplTest {
     }
 
     @Test
-    void retrieveFoyer() {
-        // Arrange
+    void retrieveFoyerByIdSuccess() {
         when(foyerRepository.findById(1L)).thenReturn(Optional.of(foyer1));
-
-        // Act
         Foyer result = foyerService.retrieveFoyer(1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals(foyer1, result);
     }
 
     @Test
-    void addFoyer() {
-        // Arrange
-        when(foyerRepository.save(foyer1)).thenReturn(foyer1);
+    void retrieveFoyerByIdNotFound() {
+        when(foyerRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Act
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            foyerService.retrieveFoyer(1L);
+        });
+
+        assertEquals("Foyer non trouvé avec l'ID : 1", exception.getMessage());
+    }
+
+    @Test
+    void addFoyer() {
+        when(foyerRepository.save(foyer1)).thenReturn(foyer1);
         Foyer result = foyerService.addFoyer(foyer1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(foyer1, result);
     }
 
     @Test
     void modifyFoyer() {
-        // Arrange
         when(foyerRepository.save(foyer1)).thenReturn(foyer1);
-
-        // Act
         Foyer result = foyerService.modifyFoyer(foyer1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(foyer1, result);
     }
 
     @Test
     void removeFoyer() {
-        // Arrange
         doNothing().when(foyerRepository).deleteById(1L);
-
-        // Act
         foyerService.removeFoyer(1L);
 
-        // Assert
         verify(foyerRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    void checkFoyerCapacity() {
-        // Act
+    void checkFoyerCapacityWithinLimit() {
         boolean result = foyer1.checkFoyerCapacity(50);
-
-        // Assert
         assertTrue(result);
+    }
 
-        result = foyer1.checkFoyerCapacity(150);
+    @Test
+    void checkFoyerCapacityExceedingLimit() {
+        boolean result = foyer1.checkFoyerCapacity(150);
         assertFalse(result);
     }
 
     @Test
-    void updateFoyerCapacity() {
-        // Act
+    void updateFoyerCapacityValid() {
         String updateMessage = foyer1.updateFoyerCapacity(50);
 
-        // Assert
         assertEquals("La capacité du foyer a été mise à jour à 150", updateMessage);
         assertEquals(150, foyer1.getCapaciteFoyer());
         assertEquals(1, foyer1.getCapacityChangeHistory().size());
+        assertTrue(foyer1.getCapacityChangeHistory().get(0).contains("Ancienne capacité = 100"));
+    }
+
+    @Test
+    void updateFoyerCapacityNegativeAddition() {
+        String updateMessage = foyerService.updateFoyerCapacity(1L, -10);
+
+        assertEquals("La capacité additionnelle ne peut pas être négative", updateMessage);
     }
 
     @Test
     void capacityChangeHistoryTracking() {
-        // Act
-        foyer1.updateFoyerCapacity(50); // Mise à jour de la capacité
-        foyer1.updateFoyerCapacity(-20); // Une autre mise à jour
+        foyer1.updateFoyerCapacity(50);
+        foyer1.updateFoyerCapacity(-20);
 
-        // Assert
         assertEquals(2, foyer1.getCapacityChangeHistory().size());
         assertEquals(130, foyer1.getCapaciteFoyer());
     }
 
     @Test
     void handleExceedingCapacity() {
-        // Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            foyer1.updateFoyerCapacity(1000); // Essai de dépasser la capacité
+            foyer1.updateFoyerCapacity(1000);
         });
 
         assertEquals("La capacité demandée dépasse la limite autorisée", exception.getMessage());
+    }
+
+    @Test
+    void getCapacityChangeHistory() {
+        foyer1.updateFoyerCapacity(50);
+        foyer1.updateFoyerCapacity(20);
+
+        List<String> history = foyer1.getCapacityChangeHistory();
+
+        assertEquals(2, history.size());
+        assertTrue(history.get(0).contains("Ancienne capacité = 100"));
+        assertTrue(history.get(1).contains("Ancienne capacité = 150"));
     }
 }

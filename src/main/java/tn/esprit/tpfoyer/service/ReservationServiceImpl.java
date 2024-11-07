@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entity.Reservation;
 import tn.esprit.tpfoyer.repository.ReservationRepository;
 
-import java.time.LocalDate; // Import LocalDate
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,8 +21,8 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public Reservation retrieveReservation(String reservationId) {
-        return reservationRepository.findById(reservationId).orElse(null);  // Use orElse(null) to handle absence of reservation
+    public Reservation retrieveReservation(Long reservationId) { // Change to Long
+        return reservationRepository.findById(reservationId).orElse(null);
     }
 
     @Override
@@ -36,12 +36,12 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public List<Reservation> trouverResSelonDateEtStatus(LocalDate d, boolean b) { // Change Date to LocalDate
+    public List<Reservation> trouverResSelonDateEtStatus(LocalDate d, boolean b) {
         return reservationRepository.findAllByAnneeUniversitaireBeforeAndEstValide(d, b);
     }
 
     @Override
-    public void removeReservation(String reservationId) {
+    public void removeReservation(Long reservationId) { // Change to Long
         reservationRepository.deleteById(reservationId);
     }
 
@@ -50,20 +50,14 @@ public class ReservationServiceImpl implements IReservationService {
         return reservationRepository.findAllByEstValide(estValide);
     }
 
-
-
     @Override
-    public List<Reservation> retrieveReservationsInDateRange(LocalDate startDate, LocalDate endDate) { // Change Date to LocalDate
+    public List<Reservation> retrieveReservationsInDateRange(LocalDate startDate, LocalDate endDate) {
         return reservationRepository.findAllByAnneeUniversitaireBetween(startDate, endDate);
     }
 
     public List<Reservation> triReservationsByDate() {
         return reservationRepository.findAll().stream()
-                .sorted(Comparator.comparing(Reservation::getAnneeUniversitaire)) // Adjust according to the date field in Reservation
+                .sorted(Comparator.comparing(Reservation::getAnneeUniversitaire))
                 .toList();
-
-
     }
-
-
 }

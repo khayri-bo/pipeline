@@ -28,7 +28,11 @@ public class Etudiant {
     @ManyToMany(mappedBy = "etudiants")
     Set<Reservation> reservations;
 
-    // Ce constructeur doit initialiser tous les champs
+    @ManyToOne
+    @JoinColumn(name = "idUniversite")
+    Universite universite;
+
+    // This constructor initializes all the fields except relationships
     public Etudiant(long idEtudiant, String nomEtudiant, String prenomEtudiant, long cinEtudiant, Date dateNaissance) {
         this.idEtudiant = idEtudiant;
         this.nomEtudiant = nomEtudiant;

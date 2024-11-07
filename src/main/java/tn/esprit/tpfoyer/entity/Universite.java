@@ -13,23 +13,21 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Universite  {
+public class Universite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long idUniversite;
 
     String nomUniversite;
-
     String adresse;
-
-    private String location;
+    String location;
 
     @OneToOne(cascade = CascadeType.ALL)
     Foyer foyer;
 
-    private int nombreEtudiants;
+    int nombreEtudiants;
 
     @OneToMany(mappedBy = "universite", cascade = CascadeType.ALL)
-    private List<Etudiant> etudiants;
+    List<Etudiant> etudiants;
 }
